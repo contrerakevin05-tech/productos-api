@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Productos App</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Card principal */
+.container {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    width: 350px;
+    box-shadow: 0px 5px 20px rgba(0,0,0,0.1);
+}
+
+/* Título */
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Inputs */
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 6px 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+/* Botón */
+button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background: #45a049;
+}
+
+/* Resultado */
+.resultado {
+    margin-top: 15px;
+    padding: 10px;
+    background: #eef;
+    border-radius: 8px;
+    text-align: center;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>💰 Calculadora de Productos</h2>
+
+<form id="formulario">
+
+    <input type="text" id="codigo" placeholder="Código">
+    <input type="text" id="nombre" placeholder="Nombre">
+    <input type="number" id="costoBase" placeholder="Costo Base">
+    <input type="number" id="descuento" placeholder="Descuento (%)">
+    <input type="number" id="iva" placeholder="IVA (%)">
+
+    <button type="submit">Calcular</button>
+</form>
+
+<div class="resultado" id="resultado">
+Resultado aparecerá aquí...
+</div>
+
+</div>
+
+<script>
+document.getElementById('formulario').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const data = {
+        codigo: document.getElementById('codigo').value,
+        nombre: document.getElementById('nombre').value,
+        costoBase: document.getElementById('costoBase').value,
+        descuento: document.getElementById('descuento').value,
+        iva: document.getElementById('iva').value
+    };
+
+    const res = await fetch('/api/calcularValorFinal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    });
+
+    const result = await res.json();
+
+    document.getElementById('resultado').innerHTML = 
+        res.ok
+        ? `
+        <b>Resultado:</b><br>
+        Final: $${result.data.valorFinal}<br>
+        IVA: $${result.data.valorIVA}<br>
+        Descuento: $${result.data.descuentoAplicado}
+        `
+        : result.mensaje;
+});
+</script>
+
+</body>
+</html>
