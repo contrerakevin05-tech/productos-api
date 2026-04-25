@@ -1,23 +1,22 @@
 const express = require('express');
 const path = require('path');
 
-// 📚 Swagger
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 
 const app = express();
 
 // ======================
-// 🔌 MIDDLEWARES
+// MIDDLEWARES
 // ======================
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Servir frontend (HTML)
+// Archivos estáticos (si usas public para css/js)
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ======================
-// 📚 CONFIGURACIÓN SWAGGER
+// SWAGGER CONFIG
 // ======================
 const swaggerOptions = {
     definition: {
@@ -25,7 +24,7 @@ const swaggerOptions = {
         info: {
             title: "API Productos",
             version: "1.0.0",
-            description: "API para cálculo de productos con IVA y descuentos"
+            description: "API con IVA y descuentos"
         }
     },
     apis: ["./routes/*.js"]
@@ -33,28 +32,29 @@ const swaggerOptions = {
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
-// UI Swagger
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // ======================
-// 🚦 RUTAS API
+// RUTAS API
 // ======================
 const productosRoutes = require('./routes/productos.routes');
 app.use('/api', productosRoutes);
 
 // ======================
-// 🏠 RUTA PRINCIPAL
+// FRONTEND (INDEX FUERA DE PUBLIC)
 // ======================
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // ======================
-// 🚀 SERVIDOR
+// SERVER
 // ======================
-app.listen(3010, () => {
-    console.log('=================================');
-    console.log('🚀 Servidor: http://localhost:3010');
-    console.log('📚 Swagger: http://localhost:3010/api-docs');
-    console.log('=================================');
+const PORT = process.env.PORT || 3010;
+
+app.listen(PORT, () => {
+    console.log('==============================');
+    console.log(`🚀 Servidor: http://localhost:${PORT}`);
+    console.log(`📚 Swagger: http://localhost:${PORT}/api-docs`);
+    console.log('==============================');
 });
